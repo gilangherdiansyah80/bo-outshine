@@ -1,29 +1,88 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "@/pages/LoginPage/index.vue";
-import HomePage from "@/pages/HomePage/index.vue";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage/index.vue";
 import ResetPasswordPage from "@/pages/ResetPasswordPage/index.vue";
+import DashboardPage from "@/pages/DashboardPage/index.vue";
+
+import MainLayout from "@/features/Layout/MainLayout/MainLayout.vue";
 
 const routes = [
   {
     path: "/",
-    name: "Login",
-    component: LoginPage,
+    redirect: "/outshine/login",
+  },
+  {
+    path: "/login",
+    redirect: "/outshine/login",
+  },
+  {
+    path: "/dashboard",
+    redirect: "/outshine/dashboard",
   },
   {
     path: "/forgot-password",
-    name: "ForgotPassword",
-    component: ForgotPasswordPage,
+    redirect: "/outshine/forgot-password",
   },
   {
     path: "/reset-password",
-    name: "ResetPassword",
-    component: ResetPasswordPage,
+    redirect: "/outshine/reset-password",
   },
   {
-    path: "/home",
-    name: "Home",
-    component: HomePage,
+    path: "/items",
+    redirect: "/outshine/items",
+  },
+  {
+    path: "/sales",
+    redirect: "/outshine/sales",
+  },
+  {
+    path: "/stats",
+    redirect: "/outshine/stats",
+  },
+  {
+    path: "/outshine",
+    component: MainLayout,
+    children: [
+      {
+        path: "login",
+        name: "Login",
+        component: LoginPage,
+        meta: { hideNav: true },
+      },
+      {
+        path: "forgot-password",
+        name: "ForgotPassword",
+        component: ForgotPasswordPage,
+        meta: { hideNav: true },
+      },
+      {
+        path: "reset-password",
+        name: "ResetPassword",
+        component: ResetPasswordPage,
+        meta: { hideNav: true },
+      },
+      {
+        path: "dashboard",
+        name: "Dashboard",
+        component: DashboardPage,
+      },
+      // Placeholders for other footer routes
+      {
+        path: "items",
+        name: "Items",
+        component: DashboardPage,
+      },
+      {
+        path: "sales",
+        name: "Sales",
+        component: DashboardPage,
+      },
+      {
+        path: "stats",
+        name: "Stats",
+        component: DashboardPage,
+      },
+    ],
   },
 ];
 

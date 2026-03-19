@@ -48,7 +48,7 @@ const handleLogin = async () => {
       } as any);
 
       // Redirect to home
-      router.push("/home");
+      router.push("/outshine/dashboard");
     } else {
       loginError.value =
         res.message || "Login failed. Please check your credentials.";

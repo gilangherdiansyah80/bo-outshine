@@ -3,7 +3,6 @@ import { ref, computed } from "vue";
 import { usePostResetPassword } from "@/services/Auth/usePostResetPassword";
 import {
   useResponsiveRouteParams,
-  useResponsiveNavigation,
 } from "@/shared/hooks/use-responsive-navigation";
 
 /**
@@ -15,7 +14,6 @@ const email = computed(() => params.value.email || "");
 const otp = computed(() => params.value.otp || "");
 
 const { trigger: resetPassword, isLoading } = usePostResetPassword();
-const { push } = useResponsiveNavigation();
 
 const newPassword = ref("");
 const showPassword = ref(false);
@@ -241,7 +239,7 @@ const togglePassword = () => {
         </p>
       </div>
       <button
-        @click="push('/')"
+        @click="$router.push('/outshine/login')"
         class="w-full py-4 bg-[#0F172A] text-white font-bold rounded-2xl hover:bg-slate-800 transition-all"
       >
         Kembali ke Login

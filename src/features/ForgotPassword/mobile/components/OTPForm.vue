@@ -51,7 +51,7 @@ const handleOtpVerify = async (e?: Event) => {
     if (res.success) {
       successMessage.value = "OTP verified! Redirecting...";
       // Navigate to Reset Password Screen via router to change top-level page
-      router.push({ path: "/reset-password", query: { email: email.value, otp: otp.value } });
+      router.push({ path: "/outshine/reset-password", query: { email: email.value, otp: otp.value } });
     } else {
       errorMessage.value = res.message || "Invalid OTP. Please try again.";
     }
