@@ -42,49 +42,68 @@ export type XiorInstance = BaseXiorInstance;
 /**
  * Creates a configured Xior (axios-like) instance with authentication and error handling.
  */
-export const createAxiosAdapter = ({
-  baseURL = "/",
-  getToken = () => {
-    const tokenStore = useTokenStore();
-    return {
-      accessToken: tokenStore.accessToken || "",
-      refreshToken: tokenStore.refreshToken || "",
-    };
-  },
-  clearSession = () => {
-    const tokenStore = useTokenStore();
-    const userStore = useUserStore();
-    tokenStore.actions.clearToken();
-    userStore.actions.clearUser();
-    // Wishlist store removed as it doesn't exist in the current project structure
-  },
+export const createAxiosAdapter = (options: CreateAxiosOptions): XiorInstance => {
+  const {
+    baseURL = "/",
+    getToken,
+    clearSession,
+    getLanguageId = () => "",
+    maintenance: maintenanceProps,
+    guard: guardProps,
+  } = options;
 
-  getLanguageId = () => "",
-  maintenance: maintenanceProps,
-  guard: guardProps,
-}: CreateAxiosOptions): XiorInstance => {
   const maintenance = {
     redirectTo: `${import.meta.env.VITE_INTERNAL_WEB || "/"}sistem`,
     statusCode: 503,
     ...maintenanceProps,
   };
 
-  const guard: CreateAxiosOptions["guard"] = {
+  const guard = {
     publicRoutes: DEFAULT_PUBLIC_ROUTES,
     statusCode: [401],
     loggedOutRedirectTo: "/login",
     ...guardProps,
   };
 
+  // Internal helper to get tokens lazily
+  const internalGetToken = (): AuthTokens => {
+    if (getToken) return getToken();
+    try {
+      const tokenStore = useTokenStore();
+      return {
+        accessToken: tokenStore.accessToken || "",
+        refreshToken: tokenStore.refreshToken || "",
+      };
+    } catch (e) {
+      return { accessToken: "", refreshToken: "" };
+    }
+  };
+
+  // Internal helper to clear session lazily
+  const internalClearSession = () => {
+    if (clearSession) {
+      clearSession();
+      return;
+    }
+    try {
+      const tokenStore = useTokenStore();
+      const userStore = useUserStore();
+      tokenStore.actions.clearToken();
+      userStore.actions.clearUser();
+    } catch (e) {
+      console.warn("Could not clear session: Pinia not ready");
+    }
+  };
+
   const fetcher = xior.create({
     baseURL,
-    timeout: 30000, // 30 seconds timeout
+    timeout: 30000,
   });
 
-  // Request interceptor - Add authentication tokens to all requests if they exist
+  // Request interceptor
   fetcher.interceptors.request.use(
-    (config) => {
-      const token = getToken();
+    (config: any) => {
+      const token = internalGetToken();
 
       const isPublicEndpoint =
         config.url?.includes("/auth/") ||
@@ -97,7 +116,6 @@ export const createAxiosAdapter = ({
         config.headers.Authorization = `Bearer ${token.accessToken}`;
       }
 
-      // Only send refresh token on refresh endpoint
       if (token?.refreshToken && isRefreshEndpoint) {
         config.headers["refresh-token"] = token.refreshToken;
       }
@@ -107,33 +125,27 @@ export const createAxiosAdapter = ({
 
       return config;
     },
-    (error) => Promise.reject(error),
+    (error: any) => Promise.reject(error),
   );
 
-  // Response interceptor - Handle global error responses
+  // Response interceptor
   fetcher.interceptors.response.use(
-    (response) => response,
-    (error) => {
+    (response: any) => response,
+    (error: any) => {
       if (error.response) {
         if (error.response.status === maintenance.statusCode) {
-          console.warn(
-            "Service Unavailable (503). Redirecting to maintenance page.",
-          );
           if (typeof window !== "undefined") {
             window.location.replace(maintenance.redirectTo);
           }
         }
         if (guard.statusCode?.includes(error.response.status)) {
-          clearSession();
+          internalClearSession();
           const isPublicRoute = getIsPublicRoute(guard.publicRoutes || []);
           if (typeof window !== "undefined" && !isPublicRoute) {
-            window.location.replace(guard.loggedOutRedirectTo!);
+            window.location.replace(guard.loggedOutRedirectTo || "/login");
           }
         }
-      } else if (error instanceof Error) {
-        console.error("Request setup error:", error.message);
       }
-
       return Promise.reject(error);
     },
   );

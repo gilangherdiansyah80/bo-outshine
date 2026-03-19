@@ -2,25 +2,26 @@
 /**
  * LoginScreen - Assembles login page components
  */
-import LoginHeader from '../components/LoginHeader.vue'
-import LoginForm from '../components/LoginForm.vue'
-import LoginFooter from '../components/LoginFooter.vue'
+import LoginHeader from "../components/LoginHeader.vue";
+import LoginForm from "../components/LoginForm.vue";
+import LoginFooter from "../components/LoginFooter.vue";
+import LoginHero from "../components/LoginHero.vue";
 </script>
 
 <template>
-  <div class="login-screen">
-    <LoginHeader />
-    <LoginForm />
-    <LoginFooter />
-  </div>
-</template>
+  <main class="min-h-screen flex flex-col overflow-x-hidden">
+    <!-- Hero Image Area -->
+    <LoginHero />
 
-<style scoped>
-.login-screen {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: linear-gradient(180deg, #f0f2f8 0%, #e8ebf2 50%, #dfe3ec 100%);
-}
-</style>
+    <!-- Content Area with Rounded Top -->
+    <div class="flex-1 flex flex-col bg-[#0F172A] rounded-t-3xl -mt-2">
+      <LoginHeader />
+      <div class="mt-4 mb-8">
+        <LoginForm />
+      </div>
+      <div class="mt-auto">
+        <LoginFooter />
+      </div>
+    </div>
+  </main>
+</template>

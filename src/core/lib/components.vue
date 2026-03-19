@@ -19,6 +19,7 @@ const currentPath = computed(() => {
 const isMatch = computed(() => props.path === currentPath.value)
 const isReady = computed(() => navigationStore.isReady)
 const shouldRender = computed(() => isMatch.value && isReady.value)
+
 </script>
 
 <template>
