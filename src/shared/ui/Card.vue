@@ -5,8 +5,10 @@ const props = withDefaults(defineProps<{
   title?: string
   subtitle?: string
   noPadding?: boolean
+  overflowVisible?: boolean
 }>(), {
   noPadding: false,
+  overflowVisible: false,
 })
 
 const slots = useSlots()
@@ -15,7 +17,7 @@ const hasFooter = computed(() => !!slots.footer)
 </script>
 
 <template>
-  <div class="bg-white overflow-hidden shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+  <div :class="['bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl', overflowVisible ? 'overflow-visible' : 'overflow-hidden']">
     <!-- Header -->
     <div v-if="hasHeader" class="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center">
       <div>

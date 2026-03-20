@@ -15,17 +15,20 @@ const navItems = [
     path: "/dashboard",
     icon: `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/>
       </svg>
     `,
   },
   {
-    name: "ITEMS",
-    path: "/items",
+    name: "Management",
+    path: "/management",
     icon: `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a2 2 0 0 1 2 2c0 .991-.701 1.832-1.667 1.967A10.147 10.147 0 0 1 21 11.5v.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-.5a10.147 10.147 0 0 1 8.667-5.533C10.701 5.832 10 4.991 10 4a2 2 0 0 1 2-2z"/>
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
       </svg>
     `,
   },

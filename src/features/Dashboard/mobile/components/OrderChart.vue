@@ -123,8 +123,8 @@ const statuses = [
       </select>
     </div>
 
-    <!-- SVG Chart Container -->
     <Card
+      overflow-visible
       class="p-2 border-none shadow-[0_4px_25px_rgba(0,0,0,0.02)] bg-white rounded-[2.2rem] flex flex-col"
     >
       <template v-if="isChartLoading">
@@ -160,7 +160,7 @@ const statuses = [
       </template>
       <template v-else>
         <!-- Chart Container with Y-Axis -->
-        <div class="flex-1 flex h-[240px] mt-4">
+        <div class="flex-1 flex h-[240px] mt-10">
           <!-- Y-Axis Labels -->
           <div
             class="flex flex-col justify-between text-[8px] font-black text-slate-300 uppercase h-[200px] py-0.5 text-right min-w-[32px] pointer-events-none"

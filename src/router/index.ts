@@ -3,6 +3,7 @@ import LoginPage from "@/pages/LoginPage/index.vue";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage/index.vue";
 import ResetPasswordPage from "@/pages/ResetPasswordPage/index.vue";
 import DashboardPage from "@/pages/DashboardPage/index.vue";
+import ManagementPage from "@/pages/ManagementPage/index.vue";
 
 import MainLayout from "@/features/Layout/MainLayout/MainLayout.vue";
 
@@ -28,8 +29,8 @@ const routes = [
     redirect: "/outshine/reset-password",
   },
   {
-    path: "/items",
-    redirect: "/outshine/items",
+    path: "/management",
+    redirect: "/outshine/management",
   },
   {
     path: "/sales",
@@ -68,9 +69,9 @@ const routes = [
       },
       // Placeholders for other footer routes
       {
-        path: "items",
-        name: "Items",
-        component: DashboardPage,
+        path: "management",
+        name: "Management",
+        component: ManagementPage,
       },
       {
         path: "sales",
