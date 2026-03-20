@@ -8,19 +8,19 @@ const userStore = useUserStore();
     class="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between z-[100] shadow-sm"
   >
     <!-- Logo Section -->
-    <div class="flex items-center gap-2">
-      <div
-        class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200"
-      >
-        <span class="text-white font-black text-xl italic">O</span>
-      </div>
-      <span class="font-black text-xl tracking-tight text-[#0F172A]"
-        >OUTSHINE</span
-      >
+    <div class="-ml-3">
+      <img src="/images/logo-nobg.png" alt="Outshine" class="w-32 h-full" />
     </div>
 
     <!-- Actions Section -->
     <div class="flex items-center gap-3">
+      <!-- User Avatar -->
+      <div
+        class="flex items-center justify-center text-blue-700 font-bold text-sm"
+      >
+        Hi, {{ userStore.dataUser?.name || "U" }}
+      </div>
+
       <!-- Notification Icon -->
       <button
         class="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 hover:text-blue-600 transition-all active:scale-90"
@@ -40,13 +40,6 @@ const userStore = useUserStore();
           ></path>
         </svg>
       </button>
-
-      <!-- User Avatar -->
-      <div
-        class="w-10 h-10 rounded-2xl bg-blue-100 border-2 border-white shadow-sm flex items-center justify-center text-blue-700 font-bold text-sm"
-      >
-        {{ userStore.dataUser?.name?.charAt(0).toUpperCase() || "U" }}
-      </div>
     </div>
   </header>
 </template>

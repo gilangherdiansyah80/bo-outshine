@@ -11,7 +11,7 @@ const router = useRouter();
 
 const navItems = [
   {
-    name: "HOME",
+    name: "Dashboard",
     path: "/dashboard",
     icon: `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -69,18 +69,18 @@ const handleNavigate = (path: string) => {
 
 <template>
   <footer
-    class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around items-center px-4 py-3 pb-safe z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
+    class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex justify-around items-center px-4 py-2 h-18 pb-safe z-[100] shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
   >
     <button
       v-for="item in navItems"
       :key="item.name"
       @click="handleNavigate(item.path)"
-      class="flex flex-col items-center justify-center min-w-[70px] transition-all duration-300 relative group"
+      class="flex flex-col items-center justify-center transition-all duration-300 px-1 py-1 rounded-xl"
+      :class="isActive(item.path) ? 'bg-slate-800' : 'hover:bg-slate-800'"
     >
       <!-- Active Background / Icon Container -->
       <div
-        class="relative w-14 h-14 flex items-center justify-center rounded-2xl transition-all duration-300 mb-1"
-        :class="isActive(item.path) ? 'bg-blue-50' : 'group-hover:bg-gray-50'"
+        class="relative w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-300"
       >
         <div
           class="w-6 h-6 transition-colors duration-300"
@@ -91,29 +91,17 @@ const handleNavigate = (path: string) => {
 
       <!-- Label -->
       <span
-        class="text-[10px] font-extrabold tracking-[1px] transition-colors duration-300"
+        class="text-[10px] font-extrabold tracking-[1px] transition-colors duration-300 -mt-3"
         :class="isActive(item.path) ? 'text-blue-600' : 'text-gray-400'"
       >
         {{ item.name }}
       </span>
-      
+
       <!-- Subtle Active Indicator (optional, but adds premium feel) -->
-      <div 
+      <div
         v-if="isActive(item.path)"
         class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full blur-[1px] opacity-0"
       ></div>
     </button>
   </footer>
 </template>
-
-<style scoped>
-/* Ensure the SVGs take the color of the parent */
-:deep(svg) {
-  width: 100%;
-  height: 100%;
-}
-
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 12px);
-}
-</style>
