@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, computed } from "vue";
 import Card from "@/shared/ui/Card.vue";
 import { useGetStats } from "@/services/Dashboard/useGetStats";
 import { useGetOrderChart } from "@/services/Dashboard/useGetOrderChart";
@@ -14,6 +14,16 @@ const {
   month: "",
   year: "",
 });
+
+const activeBarIndex = ref<number | null>(null);
+
+const toggleBar = (idx: number) => {
+  if (activeBarIndex.value === idx) {
+    activeBarIndex.value = null;
+  } else {
+    activeBarIndex.value = idx;
+  }
+};
 
 const maxOrders = computed(() => {
   if (!chartData.value.length) return 0;
@@ -296,28 +306,55 @@ const getStatConfig = (label: string) => {
               <div
                 v-for="(item, idx) in chartData"
                 :key="idx"
-                class="flex-1 flex flex-col items-center group relative h-full z-10 mx-1"
+                class="flex-1 flex flex-col items-center group relative h-full z-10 mx-1 cursor-pointer select-none"
+                @click="toggleBar(idx)"
               >
                 <!-- Revenue Bar (Secondary - light indigo) -->
                 <div
-                  class="w-full bg-indigo-100 rounded-t-md transition-all duration-700 absolute bottom-0 z-0"
+                  class="w-full bg-indigo-100/50 rounded-t-md transition-all duration-700 absolute bottom-0 z-0"
                   :style="{
-                    height: `${(item.totalRevenue / Math.max(...chartData.map((d) => d.totalRevenue))) * 100}%`,
+                    height: `${(item.totalRevenue / Math.max(...chartData.map((d) => d.totalRevenue), 1)) * 100}%`,
                   }"
                 ></div>
 
                 <!-- Order Count Bar (Primary - blue gradient) -->
                 <div
-                  class="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-md transition-all duration-700 absolute bottom-0 z-10 group-hover:from-blue-500 group-hover:to-blue-300 shadow-sm"
+                  class="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all duration-700 absolute bottom-0 z-10 shadow-sm"
                   :style="{
-                    height: `${(item.orderCount / maxOrders) * 100}%`,
+                    height: `${(item.orderCount / Math.max(maxOrders, 1)) * 100}%`,
                   }"
                 >
-                  <!-- Tooltip -->
+                  <!-- Premium Interactive Tooltip -->
                   <div
-                    class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none shadow-xl"
+                    class="absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-800 text-white p-2.5 rounded-xl transition-all duration-300 flex flex-col items-center gap-1 shadow-2xl z-[100] border border-white/10 pointer-events-none"
+                    :class="[
+                      activeBarIndex === idx
+                        ? 'opacity-100 scale-100 translate-y-0 visible'
+                        : 'opacity-0 scale-95 translate-y-2 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0 group-hover:visible',
+                    ]"
                   >
-                    {{ item.orderCount }} Orders
+                    <!-- Order Count -->
+                    <div
+                      class="text-[10px] font-black text-blue-400 leading-none uppercase tracking-wider"
+                    >
+                      {{ item.orderCount }} Orders
+                    </div>
+                    <!-- Revenue Label -->
+                    <div
+                      class="text-[9px] font-bold text-slate-300 leading-none whitespace-nowrap"
+                    >
+                      {{
+                        new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }).format(item.totalRevenue)
+                      }}
+                    </div>
+                    <!-- Tooltip Arrow -->
+                    <div
+                      class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-800 rotate-45"
+                    ></div>
                   </div>
                 </div>
 
