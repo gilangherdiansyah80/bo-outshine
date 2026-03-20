@@ -33,7 +33,7 @@ const navItems = [
     `,
   },
   {
-    name: "SALES",
+    name: "Orders",
     path: "/sales",
     icon: `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -45,7 +45,7 @@ const navItems = [
     `,
   },
   {
-    name: "STATS",
+    name: "Review",
     path: "/stats",
     icon: `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
