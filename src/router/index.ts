@@ -4,6 +4,9 @@ import ForgotPasswordPage from "@/pages/ForgotPasswordPage/index.vue";
 import ResetPasswordPage from "@/pages/ResetPasswordPage/index.vue";
 import DashboardPage from "@/pages/DashboardPage/index.vue";
 import ManagementPage from "@/pages/ManagementPage/index.vue";
+import OrderPage from "@/pages/OrderPage/index.vue";
+import DetailOrderPage from "@/pages/DetailOrderPage/index.vue";
+import UsersPage from "@/pages/UsersPage/index.vue";
 
 import MainLayout from "@/features/Layout/MainLayout/MainLayout.vue";
 
@@ -33,12 +36,20 @@ const routes = [
     redirect: "/outshine/management",
   },
   {
-    path: "/sales",
-    redirect: "/outshine/sales",
+    path: "/order",
+    redirect: "/outshine/order",
+  },
+  {
+    path: "/order/:id",
+    redirect: "/outshine/order/:id",
   },
   {
     path: "/stats",
     redirect: "/outshine/stats",
+  },
+  {
+    path: "/users",
+    redirect: "/outshine/users",
   },
   {
     path: "/outshine",
@@ -74,14 +85,25 @@ const routes = [
         component: ManagementPage,
       },
       {
-        path: "sales",
-        name: "Sales",
-        component: DashboardPage,
+        path: "order",
+        name: "Order",
+        component: OrderPage,
+      },
+      {
+        path: "order/:id",
+        name: "DetailOrder",
+        component: DetailOrderPage,
+        meta: { hideNav: true },
       },
       {
         path: "stats",
         name: "Stats",
         component: DashboardPage,
+      },
+      {
+        path: "users",
+        name: "Users",
+        component: UsersPage,
       },
     ],
   },
