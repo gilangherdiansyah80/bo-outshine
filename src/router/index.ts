@@ -7,6 +7,7 @@ import ManagementPage from "@/pages/ManagementPage/index.vue";
 import OrderPage from "@/pages/OrderPage/index.vue";
 import DetailOrderPage from "@/pages/DetailOrderPage/index.vue";
 import UsersPage from "@/pages/UsersPage/index.vue";
+import ReviewPage from "@/pages/ReviewPage/index.vue";
 
 import MainLayout from "@/features/Layout/MainLayout/MainLayout.vue";
 
@@ -44,8 +45,8 @@ const routes = [
     redirect: "/outshine/order/:id",
   },
   {
-    path: "/stats",
-    redirect: "/outshine/stats",
+    path: "/review",
+    redirect: "/outshine/review",
   },
   {
     path: "/users",
@@ -96,9 +97,9 @@ const routes = [
         meta: { hideNav: true },
       },
       {
-        path: "stats",
-        name: "Stats",
-        component: DashboardPage,
+        path: "review",
+        name: "Review",
+        component: ReviewPage,
       },
       {
         path: "users",
