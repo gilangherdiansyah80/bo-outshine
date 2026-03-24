@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useGetProducts } from "@/services/Products/useGetProducts";
+import { useDeleteProduct } from "@/services/Products/useDeleteProduct";
 import { useNavigationStore } from "@/core/lib/store";
+import Alert from "@/shared/components/Alert.vue";
+import type { AlertType } from "@/shared/components/Alert.vue";
+import ConfirmDialog from "@/shared/components/ConfirmDialog.vue";
 
 const navigationStore = useNavigationStore();
 const { products, isLoading, isError, refetch } = useGetProducts();
+const { mutate: deleteProductMutation } = useDeleteProduct();
 const searchQuery = ref("");
 
 const filteredProducts = computed(() => {
@@ -37,21 +42,24 @@ const closeMenu = () => {
 // Close menu on outside click
 const handleOutsideClick = (e: MouseEvent) => {
   const target = e.target as HTMLElement;
-  if (!target.closest('.product-menu-container')) {
+  if (!target.closest(".product-menu-container")) {
     closeMenu();
   }
 };
 
 onMounted(() => {
-  document.addEventListener('click', handleOutsideClick);
+  document.addEventListener("click", handleOutsideClick);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleOutsideClick);
+  document.removeEventListener("click", handleOutsideClick);
 });
 
 const viewProduct = (productId: string) => {
-  window.open(`https://outshine-store.vercel.app/outshine/product/${productId}`, '_blank');
+  window.open(
+    `https://outshine-store.vercel.app/outshine/product/${productId}`,
+    "_blank",
+  );
   closeMenu();
 };
 
@@ -60,14 +68,72 @@ const editProduct = (_productId: string) => {
   closeMenu();
 };
 
-const deleteProduct = (_productId: string) => {
-  // TODO: implement delete
+// Alert State
+const showAlert = ref(false);
+const alertType = ref<AlertType>("info");
+const alertMessage = ref("");
+
+// Confirm Dialog State
+const showConfirmDialog = ref(false);
+const confirmDialogMessage = ref("");
+const pendingDeleteId = ref<string | null>(null);
+
+const deleteProduct = (productId: string) => {
   closeMenu();
+  const productLabel =
+    products.value?.find((p) => p.id === productId)?.name || "produk ini";
+
+  pendingDeleteId.value = productId;
+  confirmDialogMessage.value = `Apakah Anda yakin ingin menghapus ${productLabel}?`;
+  showConfirmDialog.value = true;
+};
+
+const executeDelete = async () => {
+  if (!pendingDeleteId.value) return;
+  
+  try {
+    await deleteProductMutation(pendingDeleteId.value);
+    alertType.value = "success";
+    alertMessage.value = "Produk berhasil dihapus!";
+    showAlert.value = true;
+    refetch(); // Reload the list
+  } catch (error: any) {
+    alertType.value = "error";
+    alertMessage.value =
+      error?.response?.data?.message ||
+      "Gagal menghapus produk. Silakan coba lagi.";
+    showAlert.value = true;
+  } finally {
+    pendingDeleteId.value = null;
+  }
 };
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 relative">
+    <!-- Confirm Dialog -->
+    <ConfirmDialog
+      v-model:show="showConfirmDialog"
+      title="Hapus Produk"
+      :message="confirmDialogMessage"
+      type="danger"
+      confirmText="Ya, Hapus"
+      cancelText="Batal"
+      @confirm="executeDelete"
+    />
+
+    <!-- Alert Component -->
+    <div class="fixed top-20 left-6 right-6 z-50 pointer-events-none">
+      <Alert
+        class="pointer-events-auto"
+        :type="alertType"
+        :message="alertMessage"
+        :show="showAlert"
+        :duration="4000"
+        @close="showAlert = false"
+      />
+    </div>
+
     <!-- Search Bar -->
     <div class="px-6 py-4">
       <div class="relative group">
@@ -217,6 +283,7 @@ const deleteProduct = (_productId: string) => {
         v-for="product in filteredProducts"
         :key="product.id"
         class="bg-white rounded-[2.5rem] p-3 border border-slate-50 shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all group relative"
+        :class="activeMenu === product.id ? 'z-50' : 'z-10'"
       >
         <!-- Product Image Container -->
         <div
@@ -284,7 +351,6 @@ const deleteProduct = (_productId: string) => {
               <circle cx="12" cy="19" r="2" />
             </svg>
           </button>
-
           <!-- Dropdown Menu -->
           <Transition
             enter-active-class="transition duration-150 ease-out"
@@ -296,23 +362,39 @@ const deleteProduct = (_productId: string) => {
           >
             <div
               v-if="activeMenu === product.id"
-              class="absolute right-0 top-12 z-50 w-48 bg-white rounded-2xl border border-slate-100 shadow-xl shadow-black/10 py-2 overflow-hidden"
+              class="absolute right-0 top-12 z-50 w-48 bg-white rounded-2xl border border-slate-100 shadow-xl shadow-black/10 py-2"
             >
               <button
-                @click="viewProduct(product.id)"
+                @click.stop="viewProduct(product.id)"
                 class="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  class="text-blue-500"
+                >
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                   <circle cx="12" cy="12" r="3" />
                 </svg>
                 Lihat Produk
               </button>
               <button
-                @click="editProduct(product.id)"
+                @click.stop="editProduct(product.id)"
                 class="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
               >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-500">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  class="text-amber-500"
+                >
                   <path d="M12 20h9" />
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
@@ -320,12 +402,21 @@ const deleteProduct = (_productId: string) => {
               </button>
               <div class="border-t border-slate-100 my-1"></div>
               <button
-                @click="deleteProduct(product.id)"
+                @click.stop="deleteProduct(product.id)"
                 class="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-bold text-red-600 hover:bg-red-50 transition-colors"
               >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  />
                 </svg>
                 Hapus Produk
               </button>
