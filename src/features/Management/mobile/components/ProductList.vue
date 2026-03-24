@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useGetProducts } from "@/services/Products/useGetProducts";
+import { useNavigationStore } from "@/core/lib/store";
 
+const navigationStore = useNavigationStore();
 const { products, isLoading, isError, refetch } = useGetProducts();
 const searchQuery = ref("");
 
@@ -138,6 +140,7 @@ const formatCurrency = (value: number) => {
     <div v-else class="px-6 pb-24 grid grid-cols-1 gap-4">
       <!-- Add New Product Card -->
       <button
+        @click="navigationStore.actions.push('/add-product')"
         class="w-full h-44 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 active:scale-95 transition-all group hover:border-blue-300 hover:bg-blue-50/20"
       >
         <div

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { useNavigationStore } from "@/core/lib/store";
 import MobileHeader from "./MobileHeader.vue";
 import MobileFooter from "./MobileFooter.vue";
 
@@ -8,23 +10,30 @@ import MobileFooter from "./MobileFooter.vue";
  */
 
 const route = useRoute();
+const navigationStore = useNavigationStore();
+
+const shouldHideNav = computed(() => {
+  // Hide nav if route meta says so, or if internal navigation is on a sub-page
+  const currentPath = navigationStore.stack[navigationStore.stack.length - 1]?.path || "/";
+  return route.meta.hideNav || currentPath !== "/";
+});
 </script>
 
 <template>
   <div class="min-h-screen bg-[#F8FAFC] flex flex-col font-sans relative">
-    <!-- Top Navigation (Hidden if meta.hideNav is true) -->
-    <MobileHeader v-if="!route.meta.hideNav" />
+    <!-- Top Navigation (Hidden on auth pages and internal sub-pages) -->
+    <MobileHeader v-if="!shouldHideNav" />
 
     <!-- Main Content Area -->
     <main
       class="flex-1 w-full transition-all duration-300"
-      :class="[!route.meta.hideNav ? 'pt-16 pb-[92px]' : 'pt-0 pb-0']"
+      :class="[!shouldHideNav ? 'pt-16 pb-[92px]' : 'pt-0 pb-0']"
     >
       <slot />
     </main>
 
-    <!-- Bottom Navigation (Hidden if meta.hideNav is true) -->
-    <MobileFooter v-if="!route.meta.hideNav" />
+    <!-- Bottom Navigation (Hidden on auth pages and internal sub-pages) -->
+    <MobileFooter v-if="!shouldHideNav" />
   </div>
 </template>
 
