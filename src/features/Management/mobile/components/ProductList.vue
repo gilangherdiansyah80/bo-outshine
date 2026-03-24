@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useGetProducts } from "@/services/Products/useGetProducts";
 import { useNavigationStore } from "@/core/lib/store";
 
@@ -21,6 +21,48 @@ const formatCurrency = (value: number) => {
     currency: "IDR",
     minimumFractionDigits: 0,
   }).format(value);
+};
+
+// Dropdown menu state
+const activeMenu = ref<string | null>(null);
+
+const toggleMenu = (productId: string) => {
+  activeMenu.value = activeMenu.value === productId ? null : productId;
+};
+
+const closeMenu = () => {
+  activeMenu.value = null;
+};
+
+// Close menu on outside click
+const handleOutsideClick = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (!target.closest('.product-menu-container')) {
+    closeMenu();
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleOutsideClick);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleOutsideClick);
+});
+
+const viewProduct = (productId: string) => {
+  window.open(`https://outshine-store.vercel.app/outshine/product/${productId}`, '_blank');
+  closeMenu();
+};
+
+const editProduct = (_productId: string) => {
+  // TODO: navigate to edit page
+  closeMenu();
+};
+
+const deleteProduct = (_productId: string) => {
+  // TODO: implement delete
+  closeMenu();
 };
 </script>
 
@@ -174,7 +216,7 @@ const formatCurrency = (value: number) => {
       <div
         v-for="product in filteredProducts"
         :key="product.id"
-        class="bg-white rounded-[2.5rem] p-3 border border-slate-50 shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all group relative overflow-hidden"
+        class="bg-white rounded-[2.5rem] p-3 border border-slate-50 shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all group relative"
       >
         <!-- Product Image Container -->
         <div
@@ -225,24 +267,70 @@ const formatCurrency = (value: number) => {
         </div>
 
         <!-- Float Action Button -->
-        <div class="flex gap-2">
+        <div class="relative product-menu-container">
           <button
+            @click.stop="toggleMenu(product.id)"
             class="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-100/50 flex items-center justify-center text-slate-400 hover:bg-[#0F172A] hover:text-white transition-all shadow-sm"
           >
             <svg
               viewBox="0 0 24 24"
               width="18"
               height="18"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="3"
+              fill="currentColor"
+              stroke="none"
             >
-              <path d="M12 20h9" />
-              <path
-                d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"
-              />
+              <circle cx="12" cy="5" r="2" />
+              <circle cx="12" cy="12" r="2" />
+              <circle cx="12" cy="19" r="2" />
             </svg>
           </button>
+
+          <!-- Dropdown Menu -->
+          <Transition
+            enter-active-class="transition duration-150 ease-out"
+            enter-from-class="opacity-0 scale-95 -translate-y-1"
+            enter-to-class="opacity-100 scale-100 translate-y-0"
+            leave-active-class="transition duration-100 ease-in"
+            leave-from-class="opacity-100 scale-100"
+            leave-to-class="opacity-0 scale-95"
+          >
+            <div
+              v-if="activeMenu === product.id"
+              class="absolute right-0 top-12 z-50 w-48 bg-white rounded-2xl border border-slate-100 shadow-xl shadow-black/10 py-2 overflow-hidden"
+            >
+              <button
+                @click="viewProduct(product.id)"
+                class="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                Lihat Produk
+              </button>
+              <button
+                @click="editProduct(product.id)"
+                class="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="text-amber-500">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                Edit Produk
+              </button>
+              <div class="border-t border-slate-100 my-1"></div>
+              <button
+                @click="deleteProduct(product.id)"
+                class="w-full flex items-center gap-3 px-4 py-3 text-[13px] font-bold text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                Hapus Produk
+              </button>
+            </div>
+          </Transition>
         </div>
       </div>
     </div>
