@@ -3,11 +3,11 @@ import { fetcherOSStore } from "@/core/lib/axios";
 
 export interface HeroItem {
   id: number;
-  badgeText: string;
+  badge_text: string;
   title: string;
-  buttonText: string;
-  backgroundImage: string;
-  isActive: boolean;
+  button_text: string;
+  background_image: string;
+  is_active: boolean;
   createdAt: string;
   updatedAt: string;
 }

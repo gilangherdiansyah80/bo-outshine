@@ -5,7 +5,7 @@ export interface DiscountItem {
   id: number;
   productId: string;
   productName: string;
-  type: "percent" | "amount";
+  type: "percent" | "fixed";
   value: number;
   startDate: string;
   endDate: string;

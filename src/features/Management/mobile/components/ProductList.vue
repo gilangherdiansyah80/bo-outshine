@@ -63,8 +63,8 @@ const viewProduct = (productId: string) => {
   closeMenu();
 };
 
-const editProduct = (_productId: string) => {
-  // TODO: navigate to edit page
+const editProduct = (productId: string) => {
+  navigationStore.actions.push('/edit-product', { productId });
   closeMenu();
 };
 
