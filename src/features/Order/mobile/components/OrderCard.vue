@@ -37,7 +37,7 @@ const getStatusLabel = (status: string) => {
 <template>
   <div
     @click="router.push(`/outshine/order/${order.id}`)"
-    class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col gap-4 active:scale-[0.98] transition-all cursor-pointer"
+    class="bg-white p-5 border border-gray-100 shadow-sm flex flex-col gap-4 active:scale-[0.98] transition-all cursor-pointer"
   >
     <!-- Card Header: Store Info & Status -->
     <div class="flex items-center justify-between pb-3 border-b border-gray-50">
@@ -109,7 +109,9 @@ const getStatusLabel = (status: string) => {
     <!-- Card Footer: Total & Actions -->
     <div class="pt-3 border-t border-gray-50 mt-auto">
       <div class="flex justify-between items-center">
-        <span class="text-[12px] font-bold text-[#ea580c] cursor-pointer">Lihat Detail ></span>
+        <span class="text-[12px] font-bold text-[#ea580c] cursor-pointer"
+          >Lihat Detail ></span
+        >
         <p class="text-[13px] font-bold text-slate-400">
           Total {{ order.totalProducts }} produk:
           <span class="text-[15px] font-black text-slate-900 ml-1">{{

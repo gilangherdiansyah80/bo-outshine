@@ -1,9 +1,10 @@
 import { ref, onMounted } from "vue";
 import { fetcherOSStore } from "@/core/lib/axios";
+import { formatIDR } from "@/core/lib/utils";
 
 export interface DetailOrderAddress {
-  id: number;
-  userId: number;
+  id: number | string;
+  userId?: number | string;
   recipientName: string;
   phoneNumber: string;
   street: string;
@@ -13,45 +14,49 @@ export interface DetailOrderAddress {
 }
 
 export interface DetailOrderItem {
-  id: number;
-  orderId: number;
-  productId: number;
-  sizeId: number;
-  price: string;
+  id: number | string;
+  orderId: number | string;
+  productId: number | string;
+  sizeId?: number | string;
+  price: string | number;
   quantity: number;
   productName: string;
-  sizeName: string;
-  originalPrice: string;
+  sizeName?: string;
+  originalPrice?: string | number;
   productImage: string;
-  discountedPrice: number;
-  formattedOriginalPrice: string;
-  formattedDiscountedPrice: string;
+  discountedPrice?: number;
+  formattedOriginalPrice?: string;
+  formattedDiscountedPrice?: string;
 }
 
 export interface DetailOrderPayment {
-  id: number;
-  orderId: number;
-  amount: string;
+  id: number | string;
+  orderId: number | string;
+  amount: string | number;
   status: string;
-  paymentMethodCodes: string;
-  paymentMethodName: string;
-  bank: string;
+  paymentMethodCodes?: string;
+  paymentMethodName?: string;
+  bank?: string;
+  proofUrl?: string;
+  proofId?: string; // New ID from new response
 }
 
 export interface DetailOrderBackend {
-  id: number | string;
+  id: string; // Changed to string based on ord_123456
   userId: number;
   addressId: number;
-  totalPrice: string;
+  totalPrice: number | string; // Changed to number based on example
   status: string;
-  paymentType: string;
-  paidAmount: string;
-  remainingAmount: string;
-  createdAt: string;
-  updatedAt: string;
-  formattedTotalPrice: string;
-  formattedPaidAmount: string;
-  formattedRemainingAmount: string;
+  paymentType?: string;
+  paidAmount?: string | number;
+  remainingAmount?: string | number;
+  createdAt?: string;
+  updatedAt?: string;
+  paymentProof?: string;
+  paymentProofId?: string; // New ID for verification
+  formattedTotalPrice?: string;
+  formattedPaidAmount?: string;
+  formattedRemainingAmount?: string;
   address?: DetailOrderAddress;
   items: DetailOrderItem[];
   latestPayment?: DetailOrderPayment;
@@ -70,12 +75,22 @@ export const getDetailOrderData = async (orderId: string | number): Promise<Deta
     throw new Error("Failed to fetch order detail");
   }
 
-  // Automatically adapt to response shape (whether wrapped in success/data or array or direct object)
-  if (response.data.data) {
-    return response.data.data;
-  }
+  const rawData = response.data.data;
   
-  return response.data as unknown as DetailOrderBackend;
+  // Transform and format numeric fields for UI compatibility
+  const order: DetailOrderBackend = {
+    ...rawData,
+    formattedTotalPrice: rawData.formattedTotalPrice || formatIDR(Number(rawData.totalPrice || 0)),
+    formattedPaidAmount: rawData.formattedPaidAmount || formatIDR(Number(rawData.paidAmount || 0)),
+    formattedRemainingAmount: rawData.formattedRemainingAmount || formatIDR(Number(rawData.remainingAmount || 0)),
+    items: (rawData.items || []).map((item: DetailOrderItem) => ({
+      ...item,
+      formattedOriginalPrice: item.formattedOriginalPrice || formatIDR(Number(item.price || item.originalPrice || 0)),
+      formattedDiscountedPrice: item.formattedDiscountedPrice || formatIDR(Number(item.discountedPrice || 0)),
+    })),
+  };
+
+  return order;
 };
 
 export const useGetDetailOrder = (orderId: string | number) => {

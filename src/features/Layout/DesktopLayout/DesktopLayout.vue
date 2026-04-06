@@ -1,46 +1,81 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
+import DesktopSidebar from "./DesktopSidebar.vue";
+import DesktopHeader from "./DesktopHeader.vue";
+
 /**
- * DesktopLayout - Base layout for desktop viewports
+ * DesktopLayout - Premium Admin layout for desktop viewports
  */
 const route = useRoute();
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex flex-col">
-    <!-- Desktop Navigation Placeholder (Hidden if meta.hideNav is true) -->
-    <header
-      v-if="!route.meta.hideNav"
-      class="h-16 bg-white border-b border-slate-200 px-8 flex items-center sticky top-0 z-50"
-    >
-      <div class="flex items-center gap-2">
-        <div
-          class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"
-        >
-          <span class="text-white font-black italic">O</span>
-        </div>
-        <span
-          class="font-black text-xl tracking-tight text-slate-900 border-r border-slate-200 pr-4 mr-4"
-          >OUTSHINE</span
-        >
-        <nav class="flex gap-6">
-          <span class="text-sm font-bold text-blue-600">DASHBOARD</span>
-          <span
-            class="text-sm font-bold text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
-            >ITEMS</span
-          >
-          <span
-            class="text-sm font-bold text-slate-400 hover:text-slate-600 cursor-pointer transition-colors"
-            >SALES</span
-          >
-        </nav>
-      </div>
-    </header>
+  <div class="min-h-screen bg-slate-50 flex font-sans selection:bg-blue-100 selection:text-blue-700">
+    <!-- Desktop Sidebar -->
+    <DesktopSidebar v-if="!route.meta.hideNav" />
 
-    <main class="flex-1 transition-all duration-300" :class="[!route.meta.hideNav ? 'p-8' : 'p-0']">
-      <div :class="[!route.meta.hideNav ? 'max-w-7xl mx-auto' : 'w-full']">
-        <slot />
-      </div>
-    </main>
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 relative">
+      <!-- Desktop Header -->
+      <DesktopHeader v-if="!route.meta.hideNav" />
+
+      <!-- Page Content -->
+      <main 
+        class="flex-1 transition-all duration-500 ease-in-out" 
+        :class="[!route.meta.hideNav ? 'p-6 lg:p-10' : 'p-0']"
+      >
+        <div 
+            :class="[!route.meta.hideNav ? 'max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700' : 'w-full']"
+        >
+          <slot />
+        </div>
+      </main>
+
+      <!-- Decorative Background Elements -->
+      <div v-if="!route.meta.hideNav" class="fixed top-0 right-0 -z-10 w-[500px] h-[500px] bg-blue-400/5 blur-[120px] rounded-full pointer-events-none"></div>
+      <div v-if="!route.meta.hideNav" class="fixed bottom-0 left-[260px] -z-10 w-[400px] h-[400px] bg-indigo-400/5 blur-[100px] rounded-full pointer-events-none"></div>
+    </div>
   </div>
 </template>
+
+<style>
+/* Global smooth scrolling for the app */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Base transitions for page content */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Custom animate-in classes (Tailwind might need these if not using a plugin) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(1rem); }
+  to { transform: translateY(0); }
+}
+
+.animate-in {
+  animation-duration: 700ms;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slideInFromBottom;
+}
+</style>
