@@ -20,9 +20,9 @@ const filteredUsers = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-2">
     <!-- Search Bar -->
-    <div class="px-1">
+    <div class="bg-white px-5 py-3 flex flex-col gap-y-2">
       <div
         class="relative bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
       >
@@ -47,6 +47,9 @@ const filteredUsers = computed(() => {
           class="w-full pl-12 pr-4 py-3.5 text-[13px] font-bold text-slate-800 placeholder-slate-400 bg-transparent outline-none"
         />
       </div>
+      <p class="text-[12px] font-bold text-slate-400 px-1">
+        {{ filteredUsers.length }} user ditemukan
+      </p>
     </div>
 
     <!-- Loading State -->
@@ -118,10 +121,7 @@ const filteredUsers = computed(() => {
     </div>
 
     <!-- User List -->
-    <div v-else class="flex flex-col gap-3">
-      <p class="text-[12px] font-bold text-slate-400 px-1">
-        {{ filteredUsers.length }} user ditemukan
-      </p>
+    <div v-else class="flex flex-col gap-2">
       <UserCard v-for="user in filteredUsers" :key="user.id" :user="user" />
     </div>
   </div>

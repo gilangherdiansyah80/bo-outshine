@@ -17,7 +17,7 @@ const formatDate = (dateStr: string) => {
 
 <template>
   <div
-    class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all"
+    class="bg-white p-5 border border-gray-100 shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all"
   >
     <!-- Avatar -->
     <div

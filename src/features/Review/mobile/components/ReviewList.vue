@@ -42,81 +42,87 @@ const setFilter = (rating: number | null) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
-    <!-- Search Bar -->
-    <div class="px-1">
-      <div
-        class="relative bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="18"
-          height="18"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+  <div class="flex flex-col gap-2">
+    <section class="flex flex-col gap-y-4 bg-white p-4">
+      <!-- Search Bar -->
+      <div class="px-1">
+        <div
+          class="relative rounded-xl border border-gray-100 shadow-sm overflow-hidden"
         >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Cari review..."
-          class="w-full pl-12 pr-4 py-3.5 text-[13px] font-bold text-slate-800 placeholder-slate-400 bg-transparent outline-none"
-        />
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Cari review..."
+            class="w-full pl-12 pr-4 py-3.5 text-[13px] font-bold text-slate-800 placeholder-slate-400 bg-transparent outline-none"
+          />
+        </div>
       </div>
-    </div>
 
-    <!-- Rating Filter + Stats -->
-    <div class="px-1 flex items-center gap-2 flex-wrap">
-      <button
-        v-for="star in [5, 4, 3, 2, 1]"
-        :key="star"
-        @click="setFilter(star)"
-        :class="[
-          'flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all active:scale-95',
-          filterRating === star
-            ? 'bg-amber-50 border-amber-200 text-amber-700'
-            : 'bg-white border-gray-100 text-slate-500',
-        ]"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="12"
-          height="12"
-          fill="#FBBF24"
-          stroke="none"
+      <!-- Rating Filter + Stats -->
+      <div class="px-1 flex items-center gap-2 flex-wrap">
+        <button
+          v-for="star in [5, 4, 3, 2, 1]"
+          :key="star"
+          @click="setFilter(star)"
+          :class="[
+            'flex items-center gap-1 px-3 py-1.5 rounded-lg text-[12px] font-bold border transition-all active:scale-95',
+            filterRating === star
+              ? 'bg-amber-50 border-amber-200 text-amber-700'
+              : 'bg-white border-gray-100 text-slate-500',
+          ]"
         >
-          <path
-            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-          />
-        </svg>
-        {{ star }}
-      </button>
-      <div v-if="reviews.length" class="ml-auto flex items-center gap-1.5">
-        <svg
-          viewBox="0 0 24 24"
-          width="14"
-          height="14"
-          fill="#FBBF24"
-          stroke="none"
-        >
-          <path
-            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-          />
-        </svg>
-        <span class="text-[13px] font-black text-slate-800">{{
-          averageRating
-        }}</span>
-        <span class="text-[11px] font-bold text-slate-400"
-          >({{ reviews.length }})</span
-        >
+          <svg
+            viewBox="0 0 24 24"
+            width="12"
+            height="12"
+            fill="#FBBF24"
+            stroke="none"
+          >
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+            />
+          </svg>
+          {{ star }}
+        </button>
+        <div v-if="reviews.length" class="ml-auto flex items-center gap-1.5">
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="#FBBF24"
+            stroke="none"
+          >
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+            />
+          </svg>
+          <span class="text-[13px] font-black text-slate-800">{{
+            averageRating
+          }}</span>
+          <span class="text-[11px] font-bold text-slate-400"
+            >({{ reviews.length }})</span
+          >
+        </div>
+
+        <p class="text-[12px] font-bold text-slate-400 px-1">
+          {{ filteredReviews.length }} review ditemukan
+        </p>
       </div>
-    </div>
+    </section>
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-20">
@@ -190,10 +196,7 @@ const setFilter = (rating: number | null) => {
     </div>
 
     <!-- Review List -->
-    <div v-else class="flex flex-col gap-3">
-      <p class="text-[12px] font-bold text-slate-400 px-1">
-        {{ filteredReviews.length }} review ditemukan
-      </p>
+    <div v-else class="flex flex-col gap-2">
       <ReviewCard
         v-for="review in filteredReviews"
         :key="review.id"

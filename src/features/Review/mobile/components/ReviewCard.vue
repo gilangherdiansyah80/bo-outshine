@@ -17,7 +17,7 @@ const formatDate = (dateStr: string) => {
 
 <template>
   <div
-    class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col gap-4"
+    class="bg-white p-5 border border-gray-100 shadow-sm flex flex-col gap-4"
   >
     <!-- Reviewer Info -->
     <div class="flex items-center gap-3">
